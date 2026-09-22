@@ -1,6 +1,7 @@
 import { contentRepo } from "@/lib/config";
 import { AppShell } from "@/components/app-shell";
 import { DirectoryListing } from "@/components/directory-listing";
+import { SubjectTiles } from "@/components/subject-tiles";
 
 export default async function Home() {
   return (
@@ -9,6 +10,7 @@ export default async function Home() {
         {contentRepo.owner}/{contentRepo.name} ({contentRepo.defaultBranch})
       </h2>
       <DirectoryListing path={[]} />
+      <SubjectTiles />
     </AppShell>
   );
 }

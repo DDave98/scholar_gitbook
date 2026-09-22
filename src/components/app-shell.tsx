@@ -57,7 +57,11 @@ export async function AppShell({
         </div>
       </header>
 
-      {session?.user ? (
+      {session?.user && path.length === 0 ? (
+        <main className="min-h-0 flex-1 overflow-y-auto">
+          <div className="w-full px-6 py-10">{children}</div>
+        </main>
+      ) : session?.user ? (
         <div className="flex min-h-0 flex-1">
           <SidebarTree activePath={path} />
           <main className="min-h-0 flex-1 overflow-y-auto">

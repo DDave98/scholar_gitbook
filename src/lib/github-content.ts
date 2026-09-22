@@ -1,5 +1,5 @@
 import type { Octokit } from "octokit";
-import { contentRepo } from "@/lib/config";
+import { contentRepo, SUBJECTS_ROOT } from "@/lib/config";
 
 export type Entry = {
   name: string;
@@ -45,6 +45,12 @@ export async function listDirectory(
     });
 
   return { entries, readme };
+}
+
+/** Lists the subject folders directly under `SUBJECTS_ROOT` (e.g. `predmety/hardware`). */
+export async function listSubjects(octokit: Octokit): Promise<Entry[]> {
+  const { entries } = await listDirectory(octokit, SUBJECTS_ROOT);
+  return entries.filter((e) => e.type === "dir");
 }
 
 /**

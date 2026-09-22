@@ -17,3 +17,6 @@ export const contentRepo = {
     return process.env.CONTENT_REPO_BRANCH || "main";
   },
 };
+
+/** Top-level folder whose immediate subfolders are the browsable "subjects". */
+export const SUBJECTS_ROOT = "predmety";
