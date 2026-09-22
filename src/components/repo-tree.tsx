@@ -41,6 +41,12 @@ export async function RepoTree() {
   try {
     entries = await listRoot();
   } catch (err) {
+    console.error("Failed to list repo root", {
+      owner: contentRepo.owner,
+      repo: contentRepo.name,
+      branch: contentRepo.defaultBranch,
+      error: err,
+    });
     error =
       err instanceof Error
         ? err.message
