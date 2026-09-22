@@ -1,5 +1,6 @@
 import { auth, signIn, signOut } from "@/auth";
-import { RepoTree } from "@/components/repo-tree";
+import { contentRepo } from "@/lib/config";
+import { DirectoryListing } from "@/components/directory-listing";
 
 export default async function Home() {
   const session = await auth();
@@ -48,7 +49,12 @@ export default async function Home() {
 
       <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-10">
         {session?.user ? (
-          <RepoTree />
+          <div>
+            <h2 className="mb-4 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+              {contentRepo.owner}/{contentRepo.name} ({contentRepo.defaultBranch})
+            </h2>
+            <DirectoryListing path={[]} />
+          </div>
         ) : (
           <p className="text-zinc-600 dark:text-zinc-400">
             Přihlaš se přes GitHub pro procházení obsahu repozitáře.

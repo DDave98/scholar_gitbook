@@ -3,13 +3,10 @@ import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { getOctokit } from "@/lib/github";
 import { contentRepo } from "@/lib/config";
+import { fetchFileBuffer } from "@/lib/github-content";
+import { getFileKind } from "@/lib/file-kind";
 import { renderMarkdown } from "@/lib/markdown";
-
-type Entry = {
-  name: string;
-  path: string;
-  type: "dir" | "file";
-};
+import { DirectoryListing } from "@/components/directory-listing";
 
 export default async function TreePage({
   params,
@@ -36,45 +33,11 @@ export default async function TreePage({
     ref: contentRepo.defaultBranch,
   });
 
-  const parentPath = path.slice(0, -1).join("/");
-
   if (Array.isArray(data)) {
-    const entries: Entry[] = data
-      .filter((entry) => entry.type === "dir" || entry.type === "file")
-      .map((entry) => ({
-        name: entry.name,
-        path: entry.path,
-        type: entry.type as "dir" | "file",
-      }))
-      .sort((a, b) => {
-        if (a.type !== b.type) return a.type === "dir" ? -1 : 1;
-        return a.name.localeCompare(b.name);
-      });
-
     return (
       <main className="mx-auto w-full max-w-3xl px-6 py-10">
         <Breadcrumbs path={path} />
-        <ul className="divide-y divide-black/5 rounded-lg border border-black/10 dark:divide-white/5 dark:border-white/10">
-          <li>
-            <Link
-              href={parentPath ? `/tree/${parentPath}` : "/"}
-              className="flex items-center gap-2 px-4 py-2.5 text-sm text-zinc-500 hover:bg-black/[.03] dark:text-zinc-400 dark:hover:bg-white/[.05]"
-            >
-              ..
-            </Link>
-          </li>
-          {entries.map((entry) => (
-            <li key={entry.path}>
-              <Link
-                href={`/tree/${entry.path}`}
-                className="flex items-center gap-2 px-4 py-2.5 text-sm hover:bg-black/[.03] dark:hover:bg-white/[.05]"
-              >
-                <span aria-hidden>{entry.type === "dir" ? "📁" : "📄"}</span>
-                {entry.name}
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <DirectoryListing path={path} />
       </main>
     );
   }
@@ -83,24 +46,75 @@ export default async function TreePage({
     notFound();
   }
 
-  const content = data.content
-    ? Buffer.from(data.content, "base64").toString("utf-8")
-    : "";
-  const isMarkdown = data.name.endsWith(".md");
-  const html = isMarkdown ? await renderMarkdown(content) : null;
+  const kind = getFileKind(data.name);
+  const rawUrl = `/api/raw/${data.path}`;
 
   return (
     <main className="mx-auto w-full max-w-3xl px-6 py-10">
       <Breadcrumbs path={path} />
-      {html !== null ? (
+
+      {kind === "markdown" && (
         <article
           className="prose prose-zinc max-w-none dark:prose-invert"
-          dangerouslySetInnerHTML={{ __html: html }}
+          dangerouslySetInnerHTML={{
+            __html: await renderMarkdown(
+              (await fetchFileBuffer(octokit, data)).toString("utf-8"),
+            ),
+          }}
         />
-      ) : (
+      )}
+
+      {kind === "pdf" && (
+        <object
+          data={rawUrl}
+          type="application/pdf"
+          className="h-[85vh] w-full rounded-lg border border-black/10 dark:border-white/10"
+        >
+          <p className="p-4 text-sm text-zinc-600 dark:text-zinc-400">
+            PDF náhled není podporován.{" "}
+            <a className="underline" href={rawUrl}>
+              Stáhnout {data.name}
+            </a>
+          </p>
+        </object>
+      )}
+
+      {kind === "html" && (
+        <iframe
+          src={rawUrl}
+          title={data.name}
+          sandbox="allow-scripts allow-popups"
+          className="h-[85vh] w-full rounded-lg border border-black/10 bg-white dark:border-white/10"
+        />
+      )}
+
+      {kind === "image" && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={rawUrl}
+          alt={data.name}
+          className="max-w-full rounded-lg border border-black/10 dark:border-white/10"
+        />
+      )}
+
+      {kind === "text" && (
         <pre className="overflow-x-auto rounded-lg border border-black/10 bg-white p-4 text-sm dark:border-white/10 dark:bg-zinc-900">
-          <code>{content}</code>
+          <code>
+            {(await fetchFileBuffer(octokit, data)).toString("utf-8")}
+          </code>
         </pre>
+      )}
+
+      {kind === "binary" && (
+        <div className="rounded-lg border border-black/10 p-6 text-sm dark:border-white/10">
+          <p className="mb-3 text-zinc-600 dark:text-zinc-400">
+            Náhled pro tento typ souboru zatím není podporován.
+          </p>
+          <a className="underline" href={rawUrl}>
+            Stáhnout {data.name}
+            {data.size ? ` (${Math.round(data.size / 1024)} kB)` : ""}
+          </a>
+        </div>
       )}
     </main>
   );
