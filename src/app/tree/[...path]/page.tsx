@@ -7,22 +7,24 @@ import { fetchFileBuffer } from "@/lib/github-content";
 import { getFileKind } from "@/lib/file-kind";
 import { renderMarkdown } from "@/lib/markdown";
 import { DirectoryListing } from "@/components/directory-listing";
+import { AppShell } from "@/components/app-shell";
 
 export default async function TreePage({
   params,
 }: {
   params: Promise<{ path: string[] }>;
 }) {
+  const { path } = await params;
+
   const session = await auth();
   if (!session?.user) {
     return (
-      <p className="mx-auto max-w-3xl px-6 py-10 text-zinc-600 dark:text-zinc-400">
-        Přihlaš se přes GitHub pro procházení obsahu repozitáře.
-      </p>
+      <AppShell path={path}>
+        <></>
+      </AppShell>
     );
   }
 
-  const { path } = await params;
   const fullPath = path.join("/");
   const octokit = await getOctokit();
 
@@ -35,10 +37,10 @@ export default async function TreePage({
 
   if (Array.isArray(data)) {
     return (
-      <main className="mx-auto w-full max-w-3xl px-6 py-10">
+      <AppShell path={path}>
         <Breadcrumbs path={path} />
         <DirectoryListing path={path} />
-      </main>
+      </AppShell>
     );
   }
 
@@ -50,7 +52,7 @@ export default async function TreePage({
   const rawUrl = `/api/raw/${data.path}`;
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-6 py-10">
+    <AppShell path={path}>
       <Breadcrumbs path={path} />
 
       {kind === "markdown" && (
@@ -116,7 +118,7 @@ export default async function TreePage({
           </a>
         </div>
       )}
-    </main>
+    </AppShell>
   );
 }
 
