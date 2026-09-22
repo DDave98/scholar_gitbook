@@ -1,6 +1,7 @@
 import { auth, signIn, signOut } from "@/auth";
 import { SidebarTree } from "@/components/sidebar-tree";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 
 export async function AppShell({
   path,
@@ -60,9 +61,10 @@ export async function AppShell({
         <div className="flex min-h-0 flex-1">
           <SidebarTree activePath={path} />
           <main className="min-h-0 flex-1 overflow-y-auto">
-            <div className="mx-auto w-full max-w-3xl px-6 py-10">
-              {children}
+            <div className="sticky top-0 z-10 border-b border-black/10 bg-zinc-50/95 px-6 py-3 backdrop-blur dark:border-white/10 dark:bg-black/95">
+              <Breadcrumbs path={path} />
             </div>
+            <div className="w-full px-6 py-10">{children}</div>
           </main>
         </div>
       ) : (

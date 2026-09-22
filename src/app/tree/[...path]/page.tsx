@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { getOctokit } from "@/lib/github";
@@ -38,7 +37,6 @@ export default async function TreePage({
   if (Array.isArray(data)) {
     return (
       <AppShell path={path}>
-        <Breadcrumbs path={path} />
         <DirectoryListing path={path} />
       </AppShell>
     );
@@ -53,8 +51,6 @@ export default async function TreePage({
 
   return (
     <AppShell path={path}>
-      <Breadcrumbs path={path} />
-
       {kind === "markdown" && (
         <article
           className="prose prose-zinc max-w-none dark:prose-invert"
@@ -119,26 +115,5 @@ export default async function TreePage({
         </div>
       )}
     </AppShell>
-  );
-}
-
-function Breadcrumbs({ path }: { path: string[] }) {
-  return (
-    <nav className="mb-6 flex flex-wrap items-center gap-1 text-sm text-zinc-500 dark:text-zinc-400">
-      <Link href="/" className="hover:underline">
-        {contentRepo.owner}/{contentRepo.name}
-      </Link>
-      {path.map((segment, i) => {
-        const href = `/tree/${path.slice(0, i + 1).join("/")}`;
-        return (
-          <span key={href} className="flex items-center gap-1">
-            <span>/</span>
-            <Link href={href} className="hover:underline">
-              {segment}
-            </Link>
-          </span>
-        );
-      })}
-    </nav>
   );
 }
