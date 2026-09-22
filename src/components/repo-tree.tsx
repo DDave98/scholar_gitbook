@@ -41,11 +41,24 @@ export async function RepoTree() {
   try {
     entries = await listRoot();
   } catch (err) {
+    const octokitErr = err as {
+      status?: number;
+      response?: { data?: unknown; headers?: Record<string, string> };
+      request?: { headers?: Record<string, string> };
+    };
+    const authHeader = octokitErr.request?.headers?.authorization;
     console.error("Failed to list repo root", {
       owner: contentRepo.owner,
       repo: contentRepo.name,
       branch: contentRepo.defaultBranch,
-      error: err,
+      status: octokitErr.status,
+      responseData: JSON.stringify(octokitErr.response?.data),
+      hasAuthHeader: Boolean(authHeader),
+      authHeaderPrefix: authHeader?.slice(0, 10),
+      rateLimitRemaining: octokitErr.response?.headers?.["x-ratelimit-remaining"],
+      xAcceptedGithubPermissions:
+        octokitErr.response?.headers?.["x-accepted-github-permissions"],
+      xOauthScopes: octokitErr.response?.headers?.["x-oauth-scopes"],
     });
     error =
       err instanceof Error
