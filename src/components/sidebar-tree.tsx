@@ -83,7 +83,7 @@ export async function SidebarTree({ activePath }: { activePath: string[] }) {
   const octokit = await getOctokit();
 
   return (
-    <nav className="w-64 shrink-0 overflow-y-auto border-r border-black/10 py-4 dark:border-white/10">
+    <nav className="min-h-0 w-64 shrink-0 overflow-y-auto border-r border-black/10 py-4 dark:border-white/10">
       <Link href="/" className={entryClassName(activePath.length === 0)}>
         <span aria-hidden>🏠</span>
         <span className="truncate">

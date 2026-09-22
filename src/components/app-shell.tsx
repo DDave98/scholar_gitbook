@@ -12,8 +12,8 @@ export async function AppShell({
   const session = await auth();
 
   return (
-    <div className="flex min-h-screen flex-col bg-zinc-50 font-sans dark:bg-black">
-      <header className="flex items-center justify-between border-b border-black/10 px-6 py-4 dark:border-white/10">
+    <div className="flex h-screen flex-col overflow-hidden bg-zinc-50 font-sans dark:bg-black">
+      <header className="flex shrink-0 items-center justify-between border-b border-black/10 px-6 py-4 dark:border-white/10">
         <h1 className="text-lg font-semibold text-black dark:text-zinc-50">
           scholar_gitbook
         </h1>
@@ -57,17 +57,21 @@ export async function AppShell({
       </header>
 
       {session?.user ? (
-        <div className="flex flex-1">
+        <div className="flex min-h-0 flex-1">
           <SidebarTree activePath={path} />
-          <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-10">
-            {children}
+          <main className="min-h-0 flex-1 overflow-y-auto">
+            <div className="mx-auto w-full max-w-3xl px-6 py-10">
+              {children}
+            </div>
           </main>
         </div>
       ) : (
-        <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-10">
-          <p className="text-zinc-600 dark:text-zinc-400">
-            Přihlaš se přes GitHub pro procházení obsahu repozitáře.
-          </p>
+        <main className="min-h-0 flex-1 overflow-y-auto">
+          <div className="mx-auto w-full max-w-3xl px-6 py-10">
+            <p className="text-zinc-600 dark:text-zinc-400">
+              Přihlaš se přes GitHub pro procházení obsahu repozitáře.
+            </p>
+          </div>
         </main>
       )}
     </div>
