@@ -13,7 +13,7 @@ function entryClassName(isActive: boolean): string {
   return [
     "flex items-center gap-2 rounded px-3 py-1.5 text-sm",
     isActive
-      ? "bg-black/[.06] font-medium text-black dark:bg-white/[.10] dark:text-white"
+      ? "bg-primary/10 font-medium text-primary dark:bg-primary/15"
       : "text-zinc-600 hover:bg-black/[.04] dark:text-zinc-400 dark:hover:bg-white/[.06]",
   ].join(" ");
 }
@@ -63,7 +63,7 @@ async function SidebarLevel({
     <ul
       className={
         depth > startDepth
-          ? "ml-3 border-l border-black/10 pl-2 dark:border-white/10"
+          ? "ml-3 border-l border-border pl-2"
           : undefined
       }
     >
@@ -107,7 +107,7 @@ export async function SidebarTree({ activePath }: { activePath: string[] }) {
     } catch (err) {
       if (isAuthError(err)) {
         return (
-          <nav className="w-64 shrink-0 border-r border-black/10 p-3 dark:border-white/10">
+          <nav className="w-64 shrink-0 border-r border-border p-3">
             <AuthExpired />
           </nav>
         );
@@ -116,8 +116,8 @@ export async function SidebarTree({ activePath }: { activePath: string[] }) {
     }
 
     return (
-      <nav className="flex min-h-0 w-64 shrink-0 flex-col border-r border-black/10 dark:border-white/10">
-        <div className="shrink-0 border-b border-black/10 p-3 dark:border-white/10">
+      <nav className="flex min-h-0 w-64 shrink-0 flex-col border-r border-border">
+        <div className="shrink-0 border-b border-border p-3">
           <SubjectSwitcher
             subjects={subjects.map((s) => ({ name: s.name, path: s.path }))}
             value={scopePath}
@@ -140,7 +140,7 @@ export async function SidebarTree({ activePath }: { activePath: string[] }) {
   }
 
   return (
-    <nav className="min-h-0 w-64 shrink-0 border-r border-black/10 dark:border-white/10">
+    <nav className="min-h-0 w-64 shrink-0 border-r border-border">
       <ScrollRestore storageKey="sidebar-scroll-root" className="h-full overflow-y-auto py-4">
         <Link href="/" className={entryClassName(activePath.length === 0)}>
           <span aria-hidden>🏠</span>

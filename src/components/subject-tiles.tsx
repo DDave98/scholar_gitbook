@@ -53,7 +53,7 @@ export async function SubjectTiles() {
         <Link
           key={tile.path}
           href={`/tree/${tile.path}`}
-          className="flex flex-col items-center gap-2 rounded-lg border border-black/10 p-6 text-center transition hover:-translate-y-0.5 hover:border-black/20 hover:shadow-md dark:border-white/10 dark:hover:border-white/20"
+          className="flex flex-col items-center gap-2 rounded-lg border border-border p-6 text-center transition hover:-translate-y-0.5 hover:border-primary hover:shadow-md"
         >
           <span className="text-3xl" aria-hidden>
             📁

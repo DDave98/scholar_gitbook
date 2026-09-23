@@ -100,7 +100,7 @@ export default async function TreePage({
         <object
           data={rawUrl}
           type="application/pdf"
-          className="h-[85vh] w-full rounded-lg border border-black/10 dark:border-white/10"
+          className="h-[85vh] w-full rounded-lg border border-border"
         >
           <p className="p-4 text-sm text-zinc-600 dark:text-zinc-400">
             PDF náhled není podporován.{" "}
@@ -116,7 +116,7 @@ export default async function TreePage({
           src={rawUrl}
           title={data.name}
           sandbox="allow-scripts allow-popups"
-          className="h-[85vh] w-full rounded-lg border border-black/10 bg-white dark:border-white/10"
+          className="h-[85vh] w-full rounded-lg border border-border bg-white"
         />
       )}
 
@@ -125,12 +125,12 @@ export default async function TreePage({
         <img
           src={rawUrl}
           alt={data.name}
-          className="max-w-full rounded-lg border border-black/10 dark:border-white/10"
+          className="max-w-full rounded-lg border border-border"
         />
       )}
 
       {kind === "text" && (
-        <pre className="overflow-x-auto rounded-lg border border-black/10 bg-white p-4 text-sm dark:border-white/10 dark:bg-zinc-900">
+        <pre className="overflow-x-auto rounded-lg border border-border bg-white p-4 text-sm dark:bg-zinc-900">
           <code>
             {(await fetchFileBuffer(octokit, data)).toString("utf-8")}
           </code>
@@ -138,7 +138,7 @@ export default async function TreePage({
       )}
 
       {kind === "binary" && (
-        <div className="rounded-lg border border-black/10 p-6 text-sm dark:border-white/10">
+        <div className="rounded-lg border border-border p-6 text-sm">
           <p className="mb-3 text-zinc-600 dark:text-zinc-400">
             Náhled pro tento typ souboru zatím není podporován.
           </p>

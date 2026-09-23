@@ -2,6 +2,7 @@ import { auth, signIn, signOut } from "@/auth";
 import { SidebarTree } from "@/components/sidebar-tree";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Breadcrumbs } from "@/components/breadcrumbs";
+import { Footer } from "@/components/footer";
 
 export async function AppShell({
   path,
@@ -13,8 +14,9 @@ export async function AppShell({
   const session = await auth();
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-zinc-50 font-sans dark:bg-black">
-      <header className="flex shrink-0 items-center justify-between border-b border-black/10 px-6 py-4 dark:border-white/10">
+    <div className="flex h-screen flex-col overflow-hidden bg-surface font-sans">
+      <div className="h-1 shrink-0 bg-primary" />
+      <header className="flex shrink-0 items-center justify-between border-b border-border px-6 py-4">
         <h1 className="text-lg font-semibold text-black dark:text-zinc-50">
           scholar_gitbook
         </h1>
@@ -33,7 +35,7 @@ export async function AppShell({
                 </span>
                 <button
                   type="submit"
-                  className="rounded-full border border-black/10 px-4 py-1.5 font-medium hover:bg-black/[.04] dark:border-white/10 dark:hover:bg-white/[.08]"
+                  className="rounded-full border border-border px-4 py-1.5 font-medium hover:bg-black/[.04] dark:hover:bg-white/[.08]"
                 >
                   Odhlásit
                 </button>
@@ -48,7 +50,7 @@ export async function AppShell({
             >
               <button
                 type="submit"
-                className="rounded-full bg-foreground px-4 py-1.5 text-sm font-medium text-background hover:bg-[#383838] dark:hover:bg-[#ccc]"
+                className="rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-white hover:brightness-110"
               >
                 Přihlásit přes GitHub
               </button>
@@ -65,7 +67,7 @@ export async function AppShell({
         <div className="flex min-h-0 flex-1">
           <SidebarTree activePath={path} />
           <main className="min-h-0 flex-1 overflow-y-auto">
-            <div className="sticky top-0 z-10 border-b border-black/10 bg-zinc-50/95 px-6 py-3 backdrop-blur dark:border-white/10 dark:bg-black/95">
+            <div className="sticky top-0 z-10 border-b border-border bg-surface/95 px-6 py-3 backdrop-blur">
               <Breadcrumbs path={path} />
             </div>
             <div className="w-full px-6 py-10">{children}</div>
@@ -80,6 +82,8 @@ export async function AppShell({
           </div>
         </main>
       )}
+
+      <Footer />
     </div>
   );
 }

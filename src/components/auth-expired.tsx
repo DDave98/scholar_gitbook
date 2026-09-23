@@ -14,7 +14,7 @@ export function AuthExpired() {
       >
         <button
           type="submit"
-          className="rounded-full border border-black/10 px-4 py-1.5 font-medium hover:bg-black/[.04] dark:border-white/10 dark:hover:bg-white/[.08]"
+          className="rounded-full bg-primary px-4 py-1.5 font-medium text-white hover:brightness-110"
         >
           Přihlásit se znovu
         </button>

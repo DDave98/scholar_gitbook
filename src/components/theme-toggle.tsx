@@ -24,7 +24,7 @@ export function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label="Přepnout světlý/tmavý motiv"
-      className="rounded-full border border-black/10 p-2 text-sm hover:bg-black/[.04] dark:border-white/10 dark:hover:bg-white/[.08]"
+      className="rounded-full border border-border p-2 text-sm hover:bg-black/[.04] dark:hover:bg-white/[.08]"
     >
       {isDark === null ? null : isDark ? "☀️" : "🌙"}
     </button>
