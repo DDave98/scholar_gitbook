@@ -30,6 +30,10 @@ const TEXT_EXT = new Set([
   ".xml",
   ".toml",
   ".ini",
+  ".c",
+  ".h",
+  ".sql",
+  ".mmd",
 ]);
 
 const MIME_BY_EXT: Record<string, string> = {

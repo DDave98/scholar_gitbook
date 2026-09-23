@@ -1,6 +1,17 @@
 import { SUBJECTS_ROOT } from "@/lib/config";
 
-const EDITABLE_EXT = new Set([".md", ".markdown", ".html", ".htm", ".txt"]);
+const EDITABLE_EXT = new Set([
+  ".md",
+  ".markdown",
+  ".html",
+  ".htm",
+  ".txt",
+  ".mmd",
+  ".c",
+  ".h",
+  ".py",
+  ".sql",
+]);
 
 /** True only for files under `SUBJECTS_ROOT` with an editable extension. */
 export function isEditablePath(path: string): boolean {
