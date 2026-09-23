@@ -16,11 +16,13 @@ export async function AppShell({
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-surface font-sans">
       <div className="h-1 shrink-0 bg-primary" />
-      <header className="flex shrink-0 items-center justify-between border-b border-border px-6 py-4">
-        <h1 className="text-lg font-semibold text-black dark:text-zinc-50">
-          scholar_gitbook
-        </h1>
-        <div className="flex items-center gap-3">
+      <header className="flex shrink-0 border-b border-border">
+        <div className="flex w-64 shrink-0 items-center border-r-2 border-border bg-sidebar px-4">
+          <h1 className="text-sm font-semibold text-zinc-100">
+            scholar_gitbook
+          </h1>
+        </div>
+        <div className="flex flex-1 items-center justify-end gap-3 bg-surface px-6 py-4">
           <ThemeToggle />
           {session?.user ? (
             <form

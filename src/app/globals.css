@@ -7,6 +7,7 @@
   --background: #ffffff;
   --foreground: #171717;
   --surface: #fafafa;
+  --sidebar-bg: #1e293b;
   --border-color: #d4d4d8;
   --primary: #0284c7;
   --accent: #ea580c;
@@ -16,6 +17,7 @@
   --background: #17191d;
   --foreground: #ededed;
   --surface: #1c1e23;
+  --sidebar-bg: #0f1115;
   --border-color: #33363d;
   --primary: #38bdf8;
   --accent: #fb923c;
@@ -25,6 +27,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-surface: var(--surface);
+  --color-sidebar: var(--sidebar-bg);
   --color-border: var(--border-color);
   --color-primary: var(--primary);
   --color-accent: var(--accent);

@@ -17,7 +17,7 @@ export function SubjectSwitcher({
       onChange={(e) => {
         if (e.target.value) router.push(`/tree/${e.target.value}`);
       }}
-      className="w-full rounded border border-border bg-white px-2 py-1.5 text-sm text-black focus:border-primary focus:outline-none dark:bg-zinc-900 dark:text-zinc-50"
+      className="w-full rounded border border-white/10 bg-black/20 px-2 py-1.5 text-sm text-zinc-100 focus:border-primary focus:outline-none"
     >
       {!value && (
         <option value="" disabled>
