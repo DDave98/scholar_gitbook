@@ -6,9 +6,11 @@ import { fetchFileBuffer } from "@/lib/github-content";
 import { getFileKind } from "@/lib/file-kind";
 import { renderMarkdown } from "@/lib/markdown";
 import { isAuthError } from "@/lib/is-auth-error";
+import { isEditablePath } from "@/lib/editable";
 import { DirectoryListing } from "@/components/directory-listing";
 import { AppShell } from "@/components/app-shell";
 import { AuthExpired } from "@/components/auth-expired";
+import { FileEditor } from "@/components/file-editor";
 
 export default async function TreePage({
   params,
@@ -82,71 +84,83 @@ export default async function TreePage({
 
   const kind = getFileKind(data.name);
   const rawUrl = `/api/raw/${data.path}`;
+  const editable = isEditablePath(data.path);
+
+  let rawText: string | null = null;
+  if (kind === "markdown" || kind === "text" || (kind === "html" && editable)) {
+    rawText = (await fetchFileBuffer(octokit, data)).toString("utf-8");
+  }
+
+  let fileView: React.ReactNode = null;
+
+  if (kind === "markdown" && rawText !== null) {
+    fileView = (
+      <article
+        className="prose prose-zinc max-w-none dark:prose-invert"
+        dangerouslySetInnerHTML={{ __html: await renderMarkdown(rawText) }}
+      />
+    );
+  } else if (kind === "pdf") {
+    fileView = (
+      <object
+        data={rawUrl}
+        type="application/pdf"
+        className="h-[85vh] w-full rounded-lg border border-border"
+      >
+        <p className="p-4 text-sm text-zinc-600 dark:text-zinc-400">
+          PDF náhled není podporován.{" "}
+          <a className="underline" href={rawUrl}>
+            Stáhnout {data.name}
+          </a>
+        </p>
+      </object>
+    );
+  } else if (kind === "html") {
+    fileView = (
+      <iframe
+        src={rawUrl}
+        title={data.name}
+        sandbox="allow-scripts allow-popups allow-same-origin"
+        className="h-[85vh] w-full rounded-lg border border-border bg-white"
+      />
+    );
+  } else if (kind === "image") {
+    fileView = (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={rawUrl}
+        alt={data.name}
+        className="max-w-full rounded-lg border border-border"
+      />
+    );
+  } else if (kind === "text" && rawText !== null) {
+    fileView = (
+      <pre className="overflow-x-auto rounded-lg border border-border bg-white p-4 text-sm dark:bg-zinc-900">
+        <code>{rawText}</code>
+      </pre>
+    );
+  } else {
+    fileView = (
+      <div className="rounded-lg border border-border p-6 text-sm">
+        <p className="mb-3 text-zinc-600 dark:text-zinc-400">
+          Náhled pro tento typ souboru zatím není podporován.
+        </p>
+        <a className="underline" href={rawUrl}>
+          Stáhnout {data.name}
+          {data.size ? ` (${Math.round(data.size / 1024)} kB)` : ""}
+        </a>
+      </div>
+    );
+  }
 
   return (
     <AppShell nav="browse" path={path}>
-      {kind === "markdown" && (
-        <article
-          className="prose prose-zinc max-w-none dark:prose-invert"
-          dangerouslySetInnerHTML={{
-            __html: await renderMarkdown(
-              (await fetchFileBuffer(octokit, data)).toString("utf-8"),
-            ),
-          }}
-        />
-      )}
-
-      {kind === "pdf" && (
-        <object
-          data={rawUrl}
-          type="application/pdf"
-          className="h-[85vh] w-full rounded-lg border border-border"
-        >
-          <p className="p-4 text-sm text-zinc-600 dark:text-zinc-400">
-            PDF náhled není podporován.{" "}
-            <a className="underline" href={rawUrl}>
-              Stáhnout {data.name}
-            </a>
-          </p>
-        </object>
-      )}
-
-      {kind === "html" && (
-        <iframe
-          src={rawUrl}
-          title={data.name}
-          sandbox="allow-scripts allow-popups allow-same-origin"
-          className="h-[85vh] w-full rounded-lg border border-border bg-white"
-        />
-      )}
-
-      {kind === "image" && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={rawUrl}
-          alt={data.name}
-          className="max-w-full rounded-lg border border-border"
-        />
-      )}
-
-      {kind === "text" && (
-        <pre className="overflow-x-auto rounded-lg border border-border bg-white p-4 text-sm dark:bg-zinc-900">
-          <code>
-            {(await fetchFileBuffer(octokit, data)).toString("utf-8")}
-          </code>
-        </pre>
-      )}
-
-      {kind === "binary" && (
-        <div className="rounded-lg border border-border p-6 text-sm">
-          <p className="mb-3 text-zinc-600 dark:text-zinc-400">
-            Náhled pro tento typ souboru zatím není podporován.
-          </p>
-          <a className="underline" href={rawUrl}>
-            Stáhnout {data.name}
-            {data.size ? ` (${Math.round(data.size / 1024)} kB)` : ""}
-          </a>
-        </div>
+      {editable && rawText !== null ? (
+        <FileEditor path={data.path} sha={data.sha} initialContent={rawText}>
+          {fileView}
+        </FileEditor>
+      ) : (
+        fileView
       )}
     </AppShell>
   );
