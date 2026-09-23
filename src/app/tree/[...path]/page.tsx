@@ -115,7 +115,7 @@ export default async function TreePage({
         <iframe
           src={rawUrl}
           title={data.name}
-          sandbox="allow-scripts allow-popups"
+          sandbox="allow-scripts allow-popups allow-same-origin"
           className="h-[85vh] w-full rounded-lg border border-border bg-white"
         />
       )}
