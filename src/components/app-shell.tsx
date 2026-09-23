@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { auth, signIn, signOut } from "@/auth";
 import { SidebarTree } from "@/components/sidebar-tree";
 import { AppNav } from "@/components/app-nav";
@@ -21,9 +22,13 @@ export async function AppShell({
       <div className="h-1 shrink-0 bg-primary" />
       <header className="flex shrink-0 border-b border-border">
         <div className="flex w-64 shrink-0 items-center border-r-2 border-border bg-sidebar px-4">
-          <h1 className="text-sm font-semibold text-zinc-100">
-            scholar_gitbook
-          </h1>
+          <Image
+            src="/logo.png"
+            alt="scholar_gitbook"
+            width={40}
+            height={40}
+            priority
+          />
         </div>
         <div className="flex flex-1 items-center justify-end gap-3 bg-surface px-6 py-4">
           <ThemeToggle />
