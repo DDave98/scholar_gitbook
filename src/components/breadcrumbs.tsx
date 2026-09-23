@@ -4,7 +4,7 @@ import { contentRepo } from "@/lib/config";
 export function Breadcrumbs({ path }: { path: string[] }) {
   return (
     <nav className="flex flex-wrap items-center gap-1 text-sm text-zinc-500 dark:text-zinc-400">
-      <Link href="/" className="hover:underline">
+      <Link href="/tree" className="hover:underline">
         {contentRepo.owner}/{contentRepo.name}
       </Link>
       {path.map((segment, i) => {

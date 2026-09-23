@@ -1,13 +1,16 @@
 import { auth, signIn, signOut } from "@/auth";
 import { SidebarTree } from "@/components/sidebar-tree";
+import { AppNav } from "@/components/app-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { Footer } from "@/components/footer";
 
 export async function AppShell({
+  nav,
   path,
   children,
 }: {
+  nav: "home" | "browse";
   path: string[];
   children: React.ReactNode;
 }) {
@@ -61,17 +64,19 @@ export async function AppShell({
         </div>
       </header>
 
-      {session?.user && path.length === 0 ? (
-        <main className="min-h-0 flex-1 overflow-y-auto">
-          <div className="w-full px-6 py-10">{children}</div>
-        </main>
-      ) : session?.user ? (
+      {session?.user ? (
         <div className="flex min-h-0 flex-1">
-          <SidebarTree activePath={path} />
+          {nav === "home" ? (
+            <AppNav active="predmety" />
+          ) : (
+            <SidebarTree activePath={path} />
+          )}
           <main className="min-h-0 flex-1 overflow-y-auto">
-            <div className="sticky top-0 z-10 border-b border-border bg-surface/95 px-6 py-3 backdrop-blur">
-              <Breadcrumbs path={path} />
-            </div>
+            {nav === "browse" && (
+              <div className="sticky top-0 z-10 border-b border-border bg-surface/95 px-6 py-3 backdrop-blur">
+                <Breadcrumbs path={path} />
+              </div>
+            )}
             <div className="w-full px-6 py-10">{children}</div>
           </main>
         </div>

@@ -13,14 +13,14 @@ import { AuthExpired } from "@/components/auth-expired";
 export default async function TreePage({
   params,
 }: {
-  params: Promise<{ path: string[] }>;
+  params: Promise<{ path?: string[] }>;
 }) {
-  const { path } = await params;
+  const { path = [] } = await params;
 
   const session = await auth();
   if (!session?.user) {
     return (
-      <AppShell path={path}>
+      <AppShell nav="browse" path={path}>
         <></>
       </AppShell>
     );
@@ -47,7 +47,7 @@ export default async function TreePage({
     });
     if (isAuthError(err)) {
       return (
-        <AppShell path={path}>
+        <AppShell nav="browse" path={path}>
           <AuthExpired />
         </AppShell>
       );
@@ -60,7 +60,7 @@ export default async function TreePage({
       notFound();
     }
     return (
-      <AppShell path={path}>
+      <AppShell nav="browse" path={path}>
         <p className="text-sm text-red-600 dark:text-red-400">
           Nepodařilo se načíst {fullPath || "obsah repozitáře"}.
         </p>
@@ -70,7 +70,7 @@ export default async function TreePage({
 
   if (Array.isArray(data)) {
     return (
-      <AppShell path={path}>
+      <AppShell nav="browse" path={path}>
         <DirectoryListing path={path} />
       </AppShell>
     );
@@ -84,7 +84,7 @@ export default async function TreePage({
   const rawUrl = `/api/raw/${data.path}`;
 
   return (
-    <AppShell path={path}>
+    <AppShell nav="browse" path={path}>
       {kind === "markdown" && (
         <article
           className="prose prose-zinc max-w-none dark:prose-invert"

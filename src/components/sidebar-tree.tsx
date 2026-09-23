@@ -140,8 +140,8 @@ export async function SidebarTree({ activePath }: { activePath: string[] }) {
   return (
     <nav className="min-h-0 w-64 shrink-0 border-r-2 border-border bg-sidebar">
       <ScrollRestore storageKey="sidebar-scroll-root" className="h-full overflow-y-auto py-4">
-        <Link href="/" className={entryClassName(activePath.length === 0)}>
-          <span aria-hidden>🏠</span>
+        <Link href="/tree" className={entryClassName(activePath.length === 0)}>
+          <span aria-hidden>🗂️</span>
           <span className="truncate">
             {contentRepo.owner}/{contentRepo.name}
           </span>
