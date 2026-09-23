@@ -2,6 +2,8 @@ import { getOctokit } from "@/lib/github";
 import { contentRepo } from "@/lib/config";
 import { listDirectory, fetchFileBuffer } from "@/lib/github-content";
 import { renderMarkdown } from "@/lib/markdown";
+import { isAuthError } from "@/lib/is-auth-error";
+import { AuthExpired } from "@/components/auth-expired";
 
 export async function DirectoryListing({ path }: { path: string[] }) {
   const octokit = await getOctokit();
@@ -9,6 +11,7 @@ export async function DirectoryListing({ path }: { path: string[] }) {
 
   let readmeHtml: string | null = null;
   let error: string | null = null;
+  let authError = false;
 
   try {
     const { readme } = await listDirectory(octokit, fullPath);
@@ -24,10 +27,18 @@ export async function DirectoryListing({ path }: { path: string[] }) {
       path: fullPath,
       error: err,
     });
-    error =
-      err instanceof Error
-        ? err.message
-        : "Nepodařilo se načíst obsah repozitáře.";
+    if (isAuthError(err)) {
+      authError = true;
+    } else {
+      error =
+        err instanceof Error
+          ? err.message
+          : "Nepodařilo se načíst obsah repozitáře.";
+    }
+  }
+
+  if (authError) {
+    return <AuthExpired />;
   }
 
   if (error) {

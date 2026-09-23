@@ -5,8 +5,10 @@ import { contentRepo } from "@/lib/config";
 import { fetchFileBuffer } from "@/lib/github-content";
 import { getFileKind } from "@/lib/file-kind";
 import { renderMarkdown } from "@/lib/markdown";
+import { isAuthError } from "@/lib/is-auth-error";
 import { DirectoryListing } from "@/components/directory-listing";
 import { AppShell } from "@/components/app-shell";
+import { AuthExpired } from "@/components/auth-expired";
 
 export default async function TreePage({
   params,
@@ -27,12 +29,44 @@ export default async function TreePage({
   const fullPath = path.join("/");
   const octokit = await getOctokit();
 
-  const { data } = await octokit.rest.repos.getContent({
-    owner: contentRepo.owner,
-    repo: contentRepo.name,
-    path: fullPath,
-    ref: contentRepo.defaultBranch,
-  });
+  let data;
+  try {
+    ({ data } = await octokit.rest.repos.getContent({
+      owner: contentRepo.owner,
+      repo: contentRepo.name,
+      path: fullPath,
+      ref: contentRepo.defaultBranch,
+    }));
+  } catch (err) {
+    console.error("Failed to load path", {
+      owner: contentRepo.owner,
+      repo: contentRepo.name,
+      branch: contentRepo.defaultBranch,
+      path: fullPath,
+      error: err,
+    });
+    if (isAuthError(err)) {
+      return (
+        <AppShell path={path}>
+          <AuthExpired />
+        </AppShell>
+      );
+    }
+    const status =
+      err && typeof err === "object" && "status" in err
+        ? (err as { status?: unknown }).status
+        : undefined;
+    if (status === 404) {
+      notFound();
+    }
+    return (
+      <AppShell path={path}>
+        <p className="text-sm text-red-600 dark:text-red-400">
+          Nepodařilo se načíst {fullPath || "obsah repozitáře"}.
+        </p>
+      </AppShell>
+    );
+  }
 
   if (Array.isArray(data)) {
     return (

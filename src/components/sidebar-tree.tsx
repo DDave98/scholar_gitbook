@@ -6,6 +6,8 @@ import { listDirectory, listSubjects } from "@/lib/github-content";
 import { getEntryIcon } from "@/lib/file-kind";
 import { ScrollRestore } from "@/components/scroll-restore";
 import { SubjectSwitcher } from "@/components/subject-switcher";
+import { isAuthError } from "@/lib/is-auth-error";
+import { AuthExpired } from "@/components/auth-expired";
 
 function entryClassName(isActive: boolean): string {
   return [
@@ -35,6 +37,13 @@ async function SidebarLevel({
   try {
     ({ entries } = await listDirectory(octokit, dirPath));
   } catch (err) {
+    if (isAuthError(err)) {
+      return (
+        <div className="px-3 py-1">
+          <AuthExpired />
+        </div>
+      );
+    }
     error =
       err instanceof Error ? err.message : "Nepodařilo se načíst složku.";
   }
@@ -91,7 +100,20 @@ export async function SidebarTree({ activePath }: { activePath: string[] }) {
   if (inSubject) {
     const subjectSlug = activePath[1];
     const scopePath = `${SUBJECTS_ROOT}/${subjectSlug}`;
-    const subjects = await listSubjects(octokit);
+
+    let subjects: Awaited<ReturnType<typeof listSubjects>> = [];
+    try {
+      subjects = await listSubjects(octokit);
+    } catch (err) {
+      if (isAuthError(err)) {
+        return (
+          <nav className="w-64 shrink-0 border-r border-black/10 p-3 dark:border-white/10">
+            <AuthExpired />
+          </nav>
+        );
+      }
+      // non-auth failure: keep the tree working, just without the switcher
+    }
 
     return (
       <nav className="flex min-h-0 w-64 shrink-0 flex-col border-r border-black/10 dark:border-white/10">

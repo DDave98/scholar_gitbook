@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getOctokit } from "@/lib/github";
 import { listDirectory, listSubjects, fetchFileBuffer } from "@/lib/github-content";
+import { isAuthError } from "@/lib/is-auth-error";
+import { AuthExpired } from "@/components/auth-expired";
 
 function extractExcerpt(markdown: string): string | null {
   const line = markdown
@@ -13,7 +15,19 @@ function extractExcerpt(markdown: string): string | null {
 
 export async function SubjectTiles() {
   const octokit = await getOctokit();
-  const subjects = await listSubjects(octokit);
+
+  let subjects: Awaited<ReturnType<typeof listSubjects>> = [];
+  try {
+    subjects = await listSubjects(octokit);
+  } catch (err) {
+    console.error("Failed to list subjects", { error: err });
+    if (isAuthError(err)) return <AuthExpired />;
+    return (
+      <p className="mt-6 text-sm text-red-600 dark:text-red-400">
+        Nepodařilo se načíst seznam předmětů.
+      </p>
+    );
+  }
 
   if (subjects.length === 0) return null;
 
